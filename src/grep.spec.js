@@ -1,23 +1,25 @@
 const {expect} = require('chai')
 const grep = require('./grep')
 
-let test = (options, expectation, done) => {
-    let stream = grep(options)
-    let datas = []
-    stream.on('data', data => {
-        if (stream.isObjectMode) {
-            datas.push(data)
-        } else {
-            datas.push(data.toString())
-        }
-    })
-    stream.on('error', err => {
-        stream.removeAllListeners()
-        done(err)
-    })
-    stream.on('close', () => {
-        expect(datas).to.deep.equal(expectation)
-        done()
+let test = async (options, expectation) => {
+    return new Promise((resolve, reject) => {
+        let stream = grep(options)
+        let datas = []
+        stream.on('data', data => {
+            if (stream.isObjectMode) {
+                datas.push(data)
+            } else {
+                datas.push(data.toString())
+            }
+        })
+        stream.on('error', err => {
+            stream.removeAllListeners()
+            reject(err)
+        })
+        stream.on('close', () => {
+            expect(datas).to.deep.equal(expectation)
+            resolve()
+        })
     })
 }
 
@@ -41,43 +43,67 @@ describe('grep', () => {
             })).to.not.throw()
         })
     })
-    describe('functionality', () => {
-        it('abc', done => {
-            test({
+    describe('defaults', () => {
+        it('abc', async () => {
+            await test({
                 files: ['test_files/one/abc'],
                 pattern: 'abc'
             }, [
                 {file: 'test_files/one/abc', line: 'abcdefg'}
-            ], done)
+            ])
         })
-        it('abc (objectMode: false)', done => {
-            test({
+        it('abc case failure', async () => {
+            await test({
+                files: ['test_files/one/abc'],
+                pattern: 'aBc',
+            }, [])
+        })
+        it('abc case failure', async () => {
+            await test({
+                files: ['test_files/one/abc'],
+                pattern: 'aBc',
+            }, [])
+        })
+    })
+    describe('options', () => {
+        it('ignoreCase: true', async () => {
+            await test({
+                files: ['test_files/one/abc'],
+                pattern: 'aBc',
+                ignoreCase: true,
+            }, [
+                {file: 'test_files/one/abc', line: 'abcdefg'}
+            ])
+        })
+        it('objectMode: false', async () => {
+            await test({
                 objectMode: false,
                 files: ['test_files/one/abc'],
                 pattern: 'abc'
             }, [
                 'test_files/one/abc:abcdefg'
-            ], done)
+            ])
         })
-        it('abc (recursive: true)', done => {
-            test({
+        it('recursive: true', async () => {
+            await test({
                 recursive: true,
                 files: ['test_files/one'],
                 pattern: 'abc'
             }, [
                 {file: 'test_files/one/abc', line: 'abcdefg'},
                 {file: 'test_files/one/two/letters', line: 'abc'}
-            ], done)
+            ])
         })
-        it('abc (glob: true)', done => {
-            test({
+        it('glob: true', async () => {
+            await test({
                 glob: true,
                 files: ['test_files/one/**'],
                 pattern: 'abc'
             }, [
                 {file: 'test_files/one/abc', line: 'abcdefg'},
                 {file: 'test_files/one/two/letters', line: 'abc'}
-            ], done)
+            ])
         })
     })
 })
+
