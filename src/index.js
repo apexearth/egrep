@@ -1,1 +1,1 @@
-module.exports = require('./grep')
+module.exports = require('./egrep')

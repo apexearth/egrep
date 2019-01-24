@@ -7,7 +7,7 @@ const globp = promisify(require('glob'))
 const recursivep = promisify(require('recursive-readdir'))
 const statp = promisify(fs.stat)
 
-class Grep extends Readable {
+class Egrep extends Readable {
     /**
      * @param options
      */
@@ -103,9 +103,9 @@ class Grep extends Readable {
     }
 }
 
-function grep(options) {
-    return new Grep(options)
+function egrep(options) {
+    return new Egrep(options)
 }
 
-module.exports = grep
-module.exports.Grep = Grep
+module.exports = egrep
+module.exports.Grep = Egrep

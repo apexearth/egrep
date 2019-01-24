@@ -1,7 +1,7 @@
 {
-  "name": "grep",
+  "name": "egrep",
   "version": "0.0.1",
-  "description": "grep for node!",
+  "description": "egrep for node!",
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && npm run mocha",
@@ -10,17 +10,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/apexearth/grep.git"
+    "url": "git+ssh://git@github.com/apexearth/egrep.git"
   },
   "keywords": [
-    "grep"
+    "grep", "egrep"
   ],
   "author": "Christopher Jacobs <apexearth@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/apexearth/grep/issues"
+    "url": "https://github.com/apexearth/egrep/issues"
   },
-  "homepage": "https://github.com/apexearth/grep#readme",
+  "homepage": "https://github.com/apexearth/egrep#readme",
   "private": true,
   "devDependencies": {
     "chai": "^4.2.0",

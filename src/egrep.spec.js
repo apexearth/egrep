@@ -1,9 +1,9 @@
 const {expect} = require('chai')
-const grep = require('./grep')
+const egrep = require('./egrep')
 
 let test = async (options, expectation) => {
     return new Promise((resolve, reject) => {
-        let stream = grep(options)
+        let stream = egrep(options)
         let datas = []
         stream.on('data', data => {
             if (stream.isObjectMode) {
@@ -23,21 +23,21 @@ let test = async (options, expectation) => {
     })
 }
 
-describe('grep', () => {
+describe('egrep', () => {
     describe('basics', () => {
         it('files is required', () => {
-            expect(() => grep({
+            expect(() => egrep({
                 files: undefined
             })).to.throw()
         })
         it('pattern is required', () => {
-            expect(() => grep({
+            expect(() => egrep({
                 files: ['.'],
                 pattern: undefined
             })).to.throw()
         })
         it('basic requirements fulfilled', () => {
-            expect(() => grep({
+            expect(() => egrep({
                 files: ['.'],
                 pattern: 'abc'
             })).to.not.throw()
