@@ -4,7 +4,8 @@
   "description": "grep for node!",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/**/*.spec.js --require test/setup.js",
+    "test": "npm run lint && npm run mocha",
+    "mocha": "mocha src/**/*.spec.js",
     "lint": "eslint src/**/*.js"
   },
   "repository": {
@@ -27,6 +28,7 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "glob": "^7.1.3"
+    "glob": "^7.1.3",
+    "recursive-readdir": "^2.2.2"
   }
 }

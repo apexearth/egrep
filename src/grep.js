@@ -1,67 +1,105 @@
 const assert = require('assert')
-const {Readable} = require('stream')
-const glob = require('glob')
-
-const readline = require('readline')
 const fs = require('fs')
+const readline = require('readline')
+const {Readable} = require('stream')
+const {promisify} = require('util')
+const globp = promisify(require('glob'))
+const recursivep = promisify(require('recursive-readdir'))
+const statp = promisify(fs.stat)
 
 class Grep extends Readable {
     /**
      * @param options
      */
     constructor({
+        files,
+        pattern,
+        glob = false,
         recursive = false,
-        files = []
+        ignoreCase = false,
+        objectMode = true,
     } = {}) {
-        super()
+        super({objectMode})
+
+        this.files = files
+        this.pattern = pattern
+
+        this.glob = glob
         this.recursive = recursive
-        this.files = files || []
+        this.ignoreCase = ignoreCase
+        this.isObjectMode = objectMode
         this.validate()
 
-        this.pendingGlobs = this.files
-        this.pendingGlobMatches = []
-        this.currentGlob = null
-        this.currentFiles = []
-        this.currentFile = null
+        let regexOptions = ''
+        if (this.ignoreCase) {
+            regexOptions += 'i'
+        }
+        this.regex = new RegExp(this.pattern, regexOptions)
+        this.started = false
     }
 
     validate() {
-        assert(this.files.length > 0, 'one or more files are required')
+        assert(!(this.glob && this.recursive), 'Cannot use glob and recursive simultaneously')
+        assert(Array.isArray(this.files) && this.files.length > 0, 'One or more files are required')
+        assert(typeof this.pattern === 'string', 'One or more files are required')
     }
 
-    _read(size) {
-        if (this.pendingGlobMatches.length === 0 && this.pendingGlobs.length > 0) {
-            let pendingGlob = this.pendingGlobs.shift()
-            glob(pendingGlob, null, (err, matches) => {
-                this.pendingGlobMatches = matches
-                this.grepFile()
-            })
-        } else if (this.currentFile) {
-            this.grepFile()
-        } else {
-            this.push(null)
+    _read(/*size*/) {
+        if (!this.started) {
+            this.started = true
+            this.start()
         }
     }
 
-    grepFile() {
-        if (!this.currentGlob) {
-            this.currentGlob = this.pendingGlobMatches.pop()
+    start() {
+        this.files.reduce((promise, file) => (
+            promise
+                .then(() => this.lookupFiles(file))
+                .then(files => this.grepFiles(files))
+        ), Promise.resolve())
+            .then(() => this.destroy()) // All done!
+            .catch(err => this.destroy(err))
+    }
+
+    lookupFiles(file) {
+        if (this.glob) {
+            return globp(file, {nodir: true})
+        } else if (this.recursive) {
+            return recursivep(file)
         }
-        if (this.currentFiles.length === 0) {
-            fs.readdir()
-        }
-        if (!this.currentFile) {
-            if (this.pendingGlobMatches.length === 0) {
-                return this.push(null)
-            }
-            this.currentFile = this.pendingGlobMatches.pop()
-            this.currentFileStream = readline.createInterface({
-                input: fs.createReadStream(this.currentFile),
+        return statp(file)
+            .then(stat => stat.isFile() ? [file] : [])
+    }
+
+    grepFiles(files) {
+        return files.reduce((promise, file) => (
+            promise.then(() => this.grepFile(file))
+        ), Promise.resolve())
+    }
+
+    grepFile(file) {
+        return new Promise((resolve, reject) => {
+            const stream = readline.createInterface({input: fs.createReadStream(file)})
+            stream.on('line', line => this.grepFileLine(file, line))
+            stream.on('error', err => {
+                stream.removeAllListeners()
+                reject(err)
             })
-        }
-        this.currentFileStream.on('line', line => {
-            console.log(line)
+            stream.on('close', () => {
+                stream.removeAllListeners()
+                resolve()
+            })
         })
+    }
+
+    grepFileLine(file, line) {
+        if (this.regex.test(line)) {
+            if (this.isObjectMode) {
+                this.push({file, line})
+            } else {
+                this.push(`${file}:${line}`)
+            }
+        }
     }
 }
 

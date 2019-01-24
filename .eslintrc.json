@@ -17,16 +17,6 @@
       "error",
       4
     ],
-    "key-spacing": [
-      "error",
-      {
-        "align": {
-          "beforeColon": true,
-          "afterColon": true,
-          "on": "colon"
-        }
-      }
-    ],
     "linebreak-style": [
       "error",
       "unix"
