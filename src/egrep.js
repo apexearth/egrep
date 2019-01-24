@@ -9,7 +9,12 @@ const statp = promisify(fs.stat)
 
 class Egrep extends Readable {
     /**
-     * @param options
+     * @param {string[]} files
+     * @param {string} pattern
+     * @param {boolean} [glob = false]
+     * @param {boolean} [recursive = false]
+     * @param {boolean} [ignoreCase = false]
+     * @param {boolean} [objectMode = true]
      */
     constructor({
         files,
