@@ -102,7 +102,7 @@ class Egrep extends Readable {
             if (this.isObjectMode) {
                 this.push({file, line})
             } else {
-                this.push(`${file}:${line}`)
+                this.push(`${file}:${line}\n`)
             }
         }
     }

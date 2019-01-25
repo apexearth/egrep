@@ -9,7 +9,10 @@ let test = async (options, expectation) => {
             if (stream.isObjectMode) {
                 datas.push(data)
             } else {
-                datas.push(data.toString())
+                let split = data.toString().split('\n').filter(line => line !== '')
+                for (let line of split) {
+                    datas.push(line)
+                }
             }
         })
         stream.on('error', err => {
@@ -24,7 +27,7 @@ let test = async (options, expectation) => {
 }
 
 describe('egrep', () => {
-    describe('basics', () => {
+    describe('throws', () => {
         it('files is required', () => {
             expect(() => egrep({
                 files: undefined
@@ -43,7 +46,7 @@ describe('egrep', () => {
             })).to.not.throw()
         })
     })
-    describe('defaults', () => {
+    describe('basics', () => {
         it('abc', async () => {
             await test({
                 files: ['test_files/one/abc'],
@@ -56,13 +59,54 @@ describe('egrep', () => {
             await test({
                 files: ['test_files/one/abc'],
                 pattern: 'aBc',
-            }, [])
+            }, [
+                /* No Match */
+            ])
         })
         it('abc case failure', async () => {
             await test({
                 files: ['test_files/one/abc'],
                 pattern: 'aBc',
-            }, [])
+            }, [
+                /* No Match */
+            ])
+        })
+        it('regex pattern 1', async () => {
+            await test({
+                files: ['test_files/one/abc'],
+                pattern: 'a[b-d]{1}',
+            }, [
+                {file: 'test_files/one/abc', line: 'abcdefg'}
+            ])
+        })
+        it('regex pattern 2', async () => {
+            await test({
+                files: ['test_files/one/abc'],
+                pattern: '[a-p]',
+            }, [
+                {file: 'test_files/one/abc', line: 'abcdefg'},
+                {file: 'test_files/one/abc', line: 'hijklmnop'},
+            ])
+        })
+        it('regex pattern 3', async () => {
+            await test({
+                files: ['test_files/one/abc'],
+                pattern: 'a-z',
+            }, [
+                /* No Match */
+            ])
+        })
+        it('regex pattern 4', async () => {
+            await test({
+                recursive: true,
+                files: ['test_files'],
+                pattern: '([a-c]|[0-9])',
+            }, [
+                {"file": "test_files/numbers", "line": "1234567890"},
+                {"file": "test_files/one/abc", "line": "abcdefg"},
+                {"file": "test_files/one/two/letters", "line": "abc"},
+                {"file": "test_files/one/two/letters", "line": "thanks"}
+            ])
         })
     })
     describe('options', () => {
@@ -106,4 +150,3 @@ describe('egrep', () => {
         })
     })
 })
-
