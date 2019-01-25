@@ -11,7 +11,7 @@ program
     .option('-R, --recursive', 'Walk through directories recursively.')
     .option('-g, --glob', 'Treat file args as globs.')
     .option('-i, --ignore-case', 'Ignore pattern case.')
-    .parse(process.argv);
+    .parse(process.argv)
 
 program.objectMode = false
 program.pattern = program.args[0]

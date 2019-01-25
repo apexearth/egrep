@@ -1,4 +1,4 @@
-const isWin = process.platform === "win32"
+const isWin = process.platform === 'win32'
 const assert = require('assert')
 const fs = require('fs')
 const readline = require('readline')

@@ -1,5 +1,8 @@
 const {expect} = require('chai')
 const egrep = require('./egrep')
+const StringBuilder = require('node-stringbuilder')
+const {promisify} = require('util')
+const fs = require('fs')
 
 let test = async (options, expectation) => {
     return new Promise((resolve, reject) => {
@@ -24,6 +27,30 @@ let test = async (options, expectation) => {
             resolve()
         })
     })
+}
+let createLargeFile = async (testFile, testString) => {
+    const ws = fs.createWriteStream(testFile)
+    const write = promisify((data, done) => ws.write(data, done))
+    const close = promisify((done) => ws.close(done))
+    // Create a long string buffer.
+    let sb = new StringBuilder('0123456789')
+    for (let i = 0; i < 8; i++) {
+        sb.append(sb.toBuffer())
+    }
+    let buffer = sb.toBuffer()
+    sb.append('\n')
+    for (let i = 0; i < 32; i++) {
+        sb.appendLine(buffer)
+    }
+    // Put our buffer in our file.
+    buffer = sb.toBuffer()
+    for (let i = 0; i < 1000; i++) {
+        if (i !== 0 && i % 501 === 0) {
+            await write(`${testString}\n`)
+        }
+        await write(buffer)
+    }
+    await close()
 }
 
 describe('egrep', () => {
@@ -102,11 +129,24 @@ describe('egrep', () => {
                 files: ['test_files'],
                 pattern: '([a-c]|[0-9])',
             }, [
-                {"file": "test_files/numbers", "line": "1234567890"},
-                {"file": "test_files/one/abc", "line": "abcdefg"},
-                {"file": "test_files/one/two/letters", "line": "abc"},
-                {"file": "test_files/one/two/letters", "line": "thanks"}
+                {'file': 'test_files/numbers', 'line': '1234567890'},
+                {'file': 'test_files/one/abc', 'line': 'abcdefg'},
+                {'file': 'test_files/one/two/letters', 'line': 'abc'},
+                {'file': 'test_files/one/two/letters', 'line': 'thanks'}
             ])
+        })
+        it('large file test', async () => {
+            const testFile = 'test_files/large_file'
+            const testString = 'hey, what are you doing?'
+            await createLargeFile(testFile, testString)
+            await test({
+                recursive: true,
+                files: ['test_files'],
+                pattern: 'hey.+?',
+            }, [
+                {'file': testFile, 'line': testString},
+            ])
+            fs.unlinkSync(testFile)
         })
     })
     describe('options', () => {
