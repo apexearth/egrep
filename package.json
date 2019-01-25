@@ -34,7 +34,6 @@
   "dependencies": {
     "commander": "^2.19.0",
     "glob": "^7.1.3",
-    "node-stringbuilder": "^2.2.4",
     "recursive-readdir": "^2.2.2"
   }
 }

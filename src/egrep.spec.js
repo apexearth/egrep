@@ -1,6 +1,5 @@
 const {expect} = require('chai')
 const egrep = require('./egrep')
-const StringBuilder = require('node-stringbuilder')
 const {promisify} = require('util')
 const fs = require('fs')
 
@@ -32,23 +31,14 @@ let createLargeFile = async (testFile, testString) => {
     const ws = fs.createWriteStream(testFile)
     const write = promisify((data, done) => ws.write(data, done))
     const close = promisify((done) => ws.close(done))
-    // Create a long string buffer.
-    let sb = new StringBuilder('0123456789')
-    for (let i = 0; i < 8; i++) {
-        sb.append(sb.toBuffer())
-    }
-    let buffer = sb.toBuffer()
-    sb.append('\n')
-    for (let i = 0; i < 32; i++) {
-        sb.appendLine(buffer)
-    }
+    const buffer = Buffer.allocUnsafe(128*1024).fill('0123456789')
     // Put our buffer in our file.
-    buffer = sb.toBuffer()
     for (let i = 0; i < 1000; i++) {
         if (i !== 0 && i % 501 === 0) {
             await write(`${testString}\n`)
         }
         await write(buffer)
+        await write('\n')
     }
     await close()
 }
