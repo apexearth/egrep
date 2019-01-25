@@ -74,7 +74,12 @@ class Egrep extends Readable {
             return recursivep(file)
         }
         return statp(file)
-            .then(stat => stat.isFile() ? [file] : [])
+            .then(stat => {
+                if(stat.isDirectory()) {
+                    throw Error(`${file}: Is a directory`)
+                }
+                return stat.isFile() ? [file] : []
+            })
     }
 
     grepFiles(files) {
