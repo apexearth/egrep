@@ -63,8 +63,8 @@ class Egrep extends Readable {
                 .then(() => this.lookupFiles(file))
                 .then(files => this.grepFiles(files))
         ), Promise.resolve())
-            .then(() => this.destroy()) // All done!
-            .catch(err => this.destroy(err))
+            .then(() => this.emit('close')) // All done!
+            .catch(err => this.emit('error', err))
     }
 
     lookupFiles(file) {
