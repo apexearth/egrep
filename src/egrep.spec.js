@@ -31,7 +31,7 @@ let createLargeFile = async (testFile, testString) => {
     const ws = fs.createWriteStream(testFile)
     const write = promisify((data, done) => ws.write(data, done))
     const close = promisify((done) => ws.close(done))
-    const buffer = Buffer.allocUnsafe(128*1024).fill('0123456789')
+    const buffer = Buffer.allocUnsafe(32*1024).fill('0123456789')
     // Put our buffer in our file.
     for (let i = 0; i < 1000; i++) {
         if (i !== 0 && i % 501 === 0) {
