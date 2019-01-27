@@ -31,7 +31,7 @@ let createLargeFile = async (testFile, testString) => {
     const ws = fs.createWriteStream(testFile)
     const write = promisify((data, done) => ws.write(data, done))
     const close = promisify((done) => ws.close(done))
-    const buffer = Buffer.allocUnsafe(32*1024).fill('0123456789')
+    const buffer = Buffer.allocUnsafe(32 * 1024).fill('0123456789')
     // Put our buffer in our file.
     for (let i = 0; i < 1000; i++) {
         if (i !== 0 && i % 501 === 0) {
@@ -44,6 +44,56 @@ let createLargeFile = async (testFile, testString) => {
 }
 
 describe('egrep', () => {
+    describe('examples', () => {
+        const _require = require
+        it('Node.js Usage Example 1', () => {
+            const require = module => _require(`./${module}`)
+            let egrep = require('egrep')
+            let stream = egrep({
+                pattern: /test[1-9]/,
+                files: [
+                    'test_files/file1.txt',
+                    'test_files/',
+                ],
+                recursive: true,
+                glob: false,
+                ignoreCase: false,
+            })
+            stream.on('data', data => {
+                console.log(data)
+            })
+            stream.on('error', err => {
+                console.log(err)
+            })
+            stream.on('close', () => {
+                console.log('closed')
+            })
+        })
+        it('Node.js Usage Example 2', () => {
+            const require = module => _require(`./${module}`)
+            let egrep = require('egrep')
+            let stream = egrep({
+                pattern: /test[1-9]/,
+                files: [
+                    'test_files/file1.txt',
+                    'test_files/',
+                ],
+                recursive: true,
+                glob: false,
+                ignoreCase: false,
+                objectMode: false,
+            })
+            stream.on('data', data => {
+                console.log(data.toString())
+            })
+            stream.on('error', err => {
+                console.log(err)
+            })
+            stream.on('close', () => {
+                console.log('closed')
+            })
+        })
+    })
     describe('throws', () => {
         it('files is required', () => {
             expect(() => egrep({
@@ -119,6 +169,8 @@ describe('egrep', () => {
                 files: ['test_files'],
                 pattern: '([a-c]|[0-9])',
             }, [
+                {'file': 'test_files/file1.txt', 'line': '09876'},
+                {'file': 'test_files/file1.txt', 'line': 'aaaaaaatest4aaaaaaa'},
                 {'file': 'test_files/numbers', 'line': '1234567890'},
                 {'file': 'test_files/one/abc', 'line': 'abcdefg'},
                 {'file': 'test_files/one/two/letters', 'line': 'abc'},
@@ -155,7 +207,7 @@ describe('egrep', () => {
                 files: ['test_files/one/abc'],
                 pattern: 'abc'
             }, [
-                'test_files/one/abc:abcdefg'
+                'abcdefg'
             ])
         })
         it('recursive: true', async () => {

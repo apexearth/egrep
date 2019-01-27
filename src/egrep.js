@@ -14,7 +14,7 @@ class Egrep extends Readable {
      * @param {string} pattern
      * @param {boolean} [glob = false]
      * @param {boolean} [recursive = false]
-     * @param {boolean} [ignoreCase = false]
+     * @param {boolean} [ignoreCase = false] Perform case insensitive matching.
      * @param {boolean} [objectMode = true]
      */
     constructor({
@@ -46,8 +46,8 @@ class Egrep extends Readable {
 
     validate() {
         assert(!(this.glob && this.recursive), 'Cannot use glob and recursive simultaneously')
-        assert(Array.isArray(this.files) && this.files.length > 0, 'One or more files are required')
-        assert(typeof this.pattern === 'string', 'One or more files are required')
+        assert(Array.isArray(this.files) && this.files.length > 0, 'Missing required argument: files')
+        assert(typeof this.pattern === 'string' || this.pattern.constructor === RegExp, 'Missing required argument: pattern')
     }
 
     _read(/*size*/) {
@@ -70,13 +70,15 @@ class Egrep extends Readable {
     lookupFiles(file) {
         if (this.glob) {
             return globp(file, {nodir: true})
-        } else if (this.recursive) {
-            return recursivep(file)
         }
         return statp(file)
             .then(stat => {
-                if(stat.isDirectory()) {
-                    throw Error(`${file}: Is a directory`)
+                if (stat.isDirectory()) {
+                    if (this.recursive) {
+                        return recursivep(file)
+                    } else {
+                        throw Error(`${file}: Is a directory`)
+                    }
                 }
                 return stat.isFile() ? [file] : []
             })
@@ -111,7 +113,11 @@ class Egrep extends Readable {
             if (this.isObjectMode) {
                 this.push({file, line})
             } else {
-                this.push(`${file}:${line}\n`)
+                if (this.recursive || this.glob) {
+                    this.push(`${file}:${line}\n`)
+                } else {
+                    this.push(`${line}\n`)
+                }
             }
         }
     }

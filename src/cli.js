@@ -10,13 +10,17 @@ program
     .option('-r, --recursive', 'Walk through directories recursively.')
     .option('-R, --recursive', 'Walk through directories recursively.')
     .option('-g, --glob', 'Treat file args as globs.')
-    .option('-i, --ignore-case', 'Ignore pattern case.')
+    .option('-i, --ignore-case', 'Perform case insensitive matching.')
+    .option('-f, --file', 'Read one or more newline separated patterns from file. ' +
+        'Empty pattern lines match every input line.')
     .parse(process.argv)
 
 program.objectMode = false
 program.pattern = program.args[0]
 program.files = program.args.slice(1)
-
+if (program.file) {
+    program.files.push(program.file)
+}
 if (!program.pattern) {
     program.outputHelp()
     process.exit(2)
