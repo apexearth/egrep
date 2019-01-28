@@ -64,3 +64,19 @@ Options:
   -h, --help         output usage information
 
 ```
+
+Examples:
+
+```
+$ node-egrep 123 test_files/numbers
+1234567890
+
+$ node-egrep -r abc test_files
+test_files/one/abc:abcdefg
+test_files/one/two/letters:abc
+
+$ node-egrep -g abc "test_files/**"
+test_files/one/abc:abcdefg
+test_files/one/two/letters:abc
+
+```
