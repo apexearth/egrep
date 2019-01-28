@@ -123,8 +123,24 @@ class Egrep extends Readable {
     }
 }
 
-function egrep(options) {
-    return new Egrep(options)
+function egrep(options, done) {
+    let stream = new Egrep(options)
+    if (typeof done === 'function') {
+        let result = stream.isObjectMode ? [] : ''
+        stream.on('data', data => {
+            if (stream.isObjectMode) {
+                result.push(data)
+            } else {
+                result += data
+            }
+        })
+        stream.on('error', err => {
+            stream.removeAllListeners()
+            done(err)
+        })
+        stream.on('close', () => done(null, result))
+    }
+    return stream
 }
 
 module.exports = egrep

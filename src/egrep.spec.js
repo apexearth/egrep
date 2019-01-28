@@ -93,6 +93,47 @@ describe('egrep', () => {
                 console.log('closed')
             })
         })
+        it('Use with callback in objectMode', done => {
+            egrep({
+                pattern: /test[1-9]/,
+                files: [
+                    'test_files/file1.txt',
+                    'test_files/',
+                ],
+                recursive: true,
+            }, (err, result) => {
+                if (err) return done(err)
+                expect(result).to.deep.equal([
+                    {
+                        'file': 'test_files/file1.txt',
+                        'line': 'aaaaaaatest4aaaaaaa'
+                    },
+                    {
+                        'file': 'test_files/file1.txt',
+                        'line': 'aaaaaaatest4aaaaaaa'
+                    }
+                ])
+                return done()
+            })
+        })
+        it('Use with callback not in objectMode', done => {
+            egrep({
+                pattern: /test[1-9]/,
+                files: [
+                    'test_files/file1.txt',
+                    'test_files/',
+                ],
+                recursive: true,
+                objectMode: false,
+            }, (err, result) => {
+                if (err) return done(err)
+                expect(result).to.equal(
+                    'test_files/file1.txt:aaaaaaatest4aaaaaaa\n' +
+                    'test_files/file1.txt:aaaaaaatest4aaaaaaa\n'
+                )
+                return done()
+            })
+        })
     })
     describe('throws', () => {
         it('files is required', () => {

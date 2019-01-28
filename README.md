@@ -40,6 +40,29 @@ Output:
 { file: 'test_files/file1.txt', line: 'aaaaaaatest4aaaaaaa' }
 ```
 
+Use with callback:
+
+```javascript
+egrep({
+    pattern: /test[1-9]/,
+    files: [
+        'test_files/file1.txt',
+        'test_files/',
+    ],
+    recursive: true,
+    objectMode: false,
+}, (err, result) => {
+    if (err) console.log(err)
+    console.log(result)
+})
+```
+
+Output:
+```
+test_files/file1.txt:aaaaaaatest4aaaaaaa
+test_files/file1.txt:aaaaaaatest4aaaaaaa
+```
+
 ## Options
 
 - `files`:      The files, folders, or globs to grep.
