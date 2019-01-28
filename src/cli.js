@@ -5,6 +5,7 @@ const program = require('commander')
 const egrep = require('./egrep')
 
 program
+    .name('node-egrep')
     .version(pkg.version)
     .arguments('[options] <pattern> <file ...>')
     .option('-r, --recursive', 'Walk through directories recursively.')

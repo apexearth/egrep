@@ -4,7 +4,7 @@ egrep for Node.js *(Extended Global Regular Expressions Print)*
 
 ## Installation
 
-    $ npm install egrep --save
+    $ npm install https://github.com/apexearth/egrep --save
 
 ## Grep Recursively
 
@@ -34,11 +34,31 @@ Output:
 { file: 'test_files/file1.txt', line: 'aaaaaaatest4aaaaaaa' }
 ```
 
-##### Options
+## Options
 
-- `files`: The files, folders, or globs to grep.
-- `pattern`: The pattern to grep for.
-- `glob`: Treat files option as a glob.
-- `recursive`: Recursively grep through folders.
+- `files`:      The files, folders, or globs to grep.
+- `pattern`:    The pattern to grep for.
+- `glob`:       Treat files option as a glob.
+- `recursive`:  Recursively grep through folders.
 - `ignoreCase`: Perform case insensitive matching.
-- `objectMode`: 
+- `objectMode`: Set `false` to receive string data.
+
+## Command Line Usage
+
+```
+npm install https://github.com/apexearth/egrep -g
+```
+
+```
+Usage: node-egrep [options] [options] <pattern> <fil>
+
+Options:
+  -V, --version      output the version number
+  -r, --recursive    Walk through directories recursively.
+  -R, --recursive    Walk through directories recursively.
+  -g, --glob         Treat file args as globs.
+  -i, --ignore-case  Perform case insensitive matching.
+  -f, --file         Read one or more newline separated patterns from file. Empty pattern lines match every input line.
+  -h, --help         output usage information
+
+```

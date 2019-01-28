@@ -223,7 +223,7 @@ describe('egrep', () => {
         it('glob: true', async () => {
             await test({
                 glob: true,
-                files: ['test_files/one/**'],
+                files: ['test_files/**'],
                 pattern: 'abc'
             }, [
                 {file: 'test_files/one/abc', line: 'abcdefg'},
