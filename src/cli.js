@@ -12,8 +12,10 @@ program
     .option('-R, --recursive', 'Walk through directories recursively.')
     .option('-g, --glob', 'Treat file args as globs.')
     .option('-i, --ignore-case', 'Perform case insensitive matching.')
-    .option('-f, --file', 'Read one or more newline separated patterns from file. ' +
-        'Empty pattern lines match every input line.')
+    .option('-f, --file',
+        'Read one or more newline separated patterns from file. ' +
+        'Empty pattern lines match every input line.'
+    )
     .parse(process.argv)
 
 program.objectMode = false

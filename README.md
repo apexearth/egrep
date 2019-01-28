@@ -4,9 +4,15 @@ egrep for Node.js *(Extended Global Regular Expressions Print)*
 
 ## Installation
 
+Use with Node.js
+
     $ npm install https://github.com/apexearth/egrep --save
 
-## Grep Recursively
+Use with Command Line
+
+    $ npm install https://github.com/apexearth/egrep -g
+
+## Node.js Usage
 
 ```javascript
 let egrep = require('egrep')
@@ -44,10 +50,6 @@ Output:
 - `objectMode`: Set `false` to receive string data.
 
 ## Command Line Usage
-
-```
-npm install https://github.com/apexearth/egrep -g
-```
 
 ```
 Usage: node-egrep [options] [options] <pattern> <fil>
