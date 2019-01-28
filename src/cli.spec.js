@@ -13,8 +13,10 @@ const runEgrep = cmd => {
 const compare = async cmd => {
     const {stdout: nodeOutput} = await runNode(cmd)
     const {stdout: grepOutput} = await runEgrep(cmd.slice(5))
+    console.log('cmd: ', cmd)
+    console.log('\tnodeOutput: ', JSON.stringify(nodeOutput))
+    console.log('\tgrepOutput: ', JSON.stringify(grepOutput))
     expect(nodeOutput).to.equal(grepOutput)
-    console.log('Result: ', nodeOutput.trim())
 }
 
 describe('cli', () => {
@@ -23,7 +25,7 @@ describe('cli', () => {
             await compare('node-egrep 123 test_files/numbers')
         })
         it('recursive file test', async () => {
-            await compare('node-egrep -r 123 test_files/numbers')
+            await compare('node-egrep -r 123 test_files')
         })
         it('case insensitive file test', async () => {
             await compare('node-egrep -i A test_files/file1.txt')
