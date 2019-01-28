@@ -116,13 +116,7 @@ class Egrep extends Readable {
                 if (this.recursive || this.glob) {
                     this.push(`${file}:${line}\n`)
                 } else {
-                    // Attempt to conform to the behavior of grep on the system.
-                    if (process.platform === 'darwin' ||
-                        process.platform === 'win32') {
-                        this.push(`${line}\n`)
-                    } else {
-                        this.push(`${file}:${line}\n`)
-                    }
+                    this.push(`${line}\n`)
                 }
             }
         }
