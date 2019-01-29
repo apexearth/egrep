@@ -7,7 +7,7 @@ const runNode = cmd => {
     return execp(`node src/cli.js ${cmd.slice(10)}`)
 }
 const runEgrep = cmd => {
-    return execp('sh ' + cmd)
+    return execp(process.platform === 'win32' ? `sh  + ${cmd}` : cmd)
 }
 
 const compare = async cmd => {
