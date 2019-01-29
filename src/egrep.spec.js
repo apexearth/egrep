@@ -3,6 +3,8 @@ const egrep = require('./egrep')
 const {promisify} = require('util')
 const fs = require('fs')
 
+const largeFilePath = 'test_files/large_file'
+
 let test = async (options, expectation) => {
     return new Promise((resolve, reject) => {
         let stream = egrep(options)
@@ -22,7 +24,15 @@ let test = async (options, expectation) => {
             reject(err)
         })
         stream.on('close', () => {
-            expect(datas).to.deep.equal(expectation)
+            if (stream.isObjectMode) {
+                expect(
+                    datas.sort((a, b) => a.file < b.file ? 1 : -1)
+                ).to.deep.equal(
+                    expectation.sort((a, b) => a.file < b.file ? 1 : -1)
+                )
+            } else {
+                expect(datas.sort()).to.deep.equal(expectation.sort())
+            }
             resolve()
         })
     })
@@ -44,6 +54,11 @@ let createLargeFile = async (testFile, testString) => {
 }
 
 describe('egrep', () => {
+    after(() => {
+        if (fs.existsSync(largeFilePath)) {
+            fs.unlinkSync(largeFilePath)
+        }
+    })
     describe('examples', () => {
         const _require = require
         it('Node.js Usage Example 1', () => {
@@ -190,7 +205,7 @@ describe('egrep', () => {
         it('regex pattern 2', async () => {
             await test({
                 files: ['test_files/one/abc'],
-                pattern: '[a-p]',
+                pattern: /[a-p]/,
             }, [
                 {file: 'test_files/one/abc', line: 'abcdefg'},
                 {file: 'test_files/one/abc', line: 'hijklmnop'},
@@ -219,17 +234,16 @@ describe('egrep', () => {
             ])
         })
         it('large file test', async () => {
-            const testFile = 'test_files/large_file'
             const testString = 'hey, what are you doing?'
-            await createLargeFile(testFile, testString)
+            await createLargeFile(largeFilePath, testString)
             await test({
                 recursive: true,
                 files: ['test_files'],
                 pattern: 'hey.+?',
             }, [
-                {'file': testFile, 'line': testString},
+                {'file': largeFilePath, 'line': testString},
             ])
-            fs.unlinkSync(testFile)
+            fs.unlinkSync(largeFilePath)
         })
     })
     describe('options', () => {
@@ -270,6 +284,20 @@ describe('egrep', () => {
                 {file: 'test_files/one/abc', line: 'abcdefg'},
                 {file: 'test_files/one/two/letters', line: 'abc'}
             ])
+        })
+    })
+    describe('bad input', () => {
+        it('files are not strings', () => {
+            expect(() => egrep({
+                files: [{name: 'test_files/numbers'}],
+                pattern: 'abc',
+            })).to.throw()
+        })
+        it('pattern is not a string or RegExp', () => {
+            expect(() => egrep({
+                files: ['test_files/numbers'],
+                pattern: {abc: 123},
+            })).to.throw()
         })
     })
 })

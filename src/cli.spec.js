@@ -7,7 +7,7 @@ const runNode = cmd => {
     return execp(`node src/cli.js ${cmd.slice(10)}`)
 }
 const runEgrep = cmd => {
-    return execp(cmd)
+    return execp('sh ' + cmd)
 }
 
 const compare = async cmd => {
@@ -32,7 +32,7 @@ describe('cli', () => {
         })
     })
     it('glob file test', async () => {
-        const {stdout: nodeOutput} = await runNode('node-egrep -g abc test_files/\\*\\*')
+        const {stdout: nodeOutput} = await runNode('node-egrep -g abc "test_files/**"')
         expect(nodeOutput).to.equal(
             'test_files/one/abc:abcdefg\n' +
             'test_files/one/two/letters:abc\n')
@@ -40,5 +40,27 @@ describe('cli', () => {
     it('help output', async () => {
         const {stdout: nodeOutput} = await runNode('node-egrep -h')
         expect(nodeOutput.startsWith('Usage: node-egrep')).to.equal(true)
+    })
+    describe('bad input', () => {
+        const test = (cmd, done) => {
+            runNode(cmd)
+                .then((stdout, stderr) => {
+                    console.log('stdout:', stdout)
+                    console.log('stderr:', stderr)
+                    done('Command was unexpectedly successful.')
+                })
+                .catch(err => {
+                    expect(err.code).to.equal(1)
+                    expect(err.stderr).to.contain('missing required argument')
+                    done()
+                })
+                .catch(done)
+        }
+        it('no arguments', done => {
+            test('node-egrep', done)
+        })
+        it('no file argument', done => {
+            test('node-egrep one', done)
+        })
     })
 })

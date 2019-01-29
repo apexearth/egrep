@@ -45,9 +45,12 @@ class Egrep extends Readable {
     }
 
     validate() {
-        assert(!(this.glob && this.recursive), 'Cannot use glob and recursive simultaneously')
-        assert(Array.isArray(this.files) && this.files.length > 0, 'Missing required argument: files')
-        assert(typeof this.pattern === 'string' || this.pattern.constructor === RegExp, 'Missing required argument: pattern')
+        assert(!(this.glob && this.recursive), 'Cannot use `glob` and `recursive` simultaneously')
+        assert(Array.isArray(this.files) && this.files.length > 0, 'Missing required option: `files`')
+        assert(this.pattern, 'Missing required option: pattern')
+
+        assert(typeof this.pattern === 'string' || this.pattern.constructor === RegExp, 'Invalid option: `pattern` must be a string or RegExp.')
+        assert(!this.files.some(file => typeof file !== 'string'), 'Invalid option: `files` must be type `string[].`')
     }
 
     _read(/*size*/) {
