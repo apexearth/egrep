@@ -12,3 +12,4 @@ This contains a list of *possible* to-do items of varying importance.
   - Files searched, lines searched, size searched.
 - Ability to run a function or execute a program for each result found.
 - Ability to add an exclusion filemask. (for use in tandem with recursive/glob matching)
+- Grep from stdin when no file is specified.
