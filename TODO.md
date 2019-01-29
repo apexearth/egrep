@@ -13,4 +13,3 @@ This contains a list of *possible* to-do items of varying importance.
 - Ability to run a function or execute a program for each result found.
 - Ability to add an exclusion filemask. (for use in tandem with recursive/glob matching)
 - Grep from stdin when no file is specified.
-- Uniquify list of files since files can currently match multiple times.

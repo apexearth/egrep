@@ -123,10 +123,6 @@ describe('egrep', () => {
                         'file': 'test_files/file1.txt',
                         'line': 'aaaaaaatest4aaaaaaa'
                     },
-                    {
-                        'file': 'test_files/file1.txt',
-                        'line': 'aaaaaaatest4aaaaaaa'
-                    }
                 ])
                 return done()
             })
@@ -143,7 +139,6 @@ describe('egrep', () => {
             }, (err, result) => {
                 if (err) return done(err)
                 expect(result).to.equal(
-                    'test_files/file1.txt:aaaaaaatest4aaaaaaa\n' +
                     'test_files/file1.txt:aaaaaaatest4aaaaaaa\n'
                 )
                 return done()

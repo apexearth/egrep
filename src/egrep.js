@@ -7,6 +7,7 @@ const {promisify} = require('util')
 const globp = promisify(require('glob'))
 const recursivep = promisify(require('recursive-readdir'))
 const statp = promisify(fs.stat)
+const upath = require('upath')
 
 class Egrep extends Readable {
     /**
@@ -27,6 +28,7 @@ class Egrep extends Readable {
     } = {}) {
         super({objectMode})
 
+        this.processedFiles = []
         this.files = files
         this.pattern = pattern
 
@@ -84,11 +86,11 @@ class Egrep extends Readable {
                     }
                 }
                 return stat.isFile() ? [file] : []
-            })
+            }).then(files => files.map(upath.normalize))
     }
 
     grepFiles(files) {
-        return files.reduce((promise, file) => (
+        return files.filter(file => !this.processedFiles.includes(file)).reduce((promise, file) => (
             promise.then(() => this.grepFile(file))
         ), Promise.resolve())
     }
@@ -102,6 +104,7 @@ class Egrep extends Readable {
                 reject(err)
             })
             stream.on('close', () => {
+                this.processedFiles.push(file)
                 stream.removeAllListeners()
                 resolve()
             })
