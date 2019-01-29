@@ -103,3 +103,7 @@ test_files/one/abc:abcdefg
 test_files/one/two/letters:abc
 
 ```
+
+## Compatibility
+
+Node.js versions 8, 10, and 11.
