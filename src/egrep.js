@@ -17,6 +17,7 @@ class Egrep extends Readable {
      * @param {boolean} [ignoreCase = false] Perform case insensitive matching.
      * @param {boolean} [objectMode = true]
      * @param {boolean} [fullBinaryMatches = false] Display the full binary match.
+     * @param {boolean} [hideBinaryMatches = false] Hide any binary matches.
      */
     constructor({
         files,
@@ -26,6 +27,7 @@ class Egrep extends Readable {
         ignoreCase = false,
         objectMode = true,
         fullBinaryMatches = false,
+        hideBinaryMatches = false,
     } = {}) {
         super({objectMode})
 
@@ -38,6 +40,7 @@ class Egrep extends Readable {
         this.ignoreCase = ignoreCase
         this.isObjectMode = objectMode
         this.fullBinaryMatches = fullBinaryMatches
+        this.hideBinaryMatches = hideBinaryMatches
         this.validate()
 
         let regexOptions = ''
@@ -115,7 +118,9 @@ class Egrep extends Readable {
 
     grepFileLine(file, line) {
         if (this.regex.test(line)) {
-            if (!this.fullBinaryMatches && /\000/.test(line)) {
+            if (this.hideBinaryMatches && /\000/.test(line)) {
+                return
+            } else if (!this.fullBinaryMatches && /\000/.test(line)) {
                 line = 'Binary content match.'
             }
             if (this.isObjectMode) {
