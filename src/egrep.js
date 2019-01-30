@@ -1,4 +1,3 @@
-const isWin = process.platform === 'win32'
 const assert = require('assert')
 const fs = require('fs')
 const readline = require('readline')
@@ -112,9 +111,6 @@ class Egrep extends Readable {
     }
 
     grepFileLine(file, line) {
-        if (isWin) {
-            file = file.replace(/\\/g, '/')
-        }
         if (this.regex.test(line)) {
             if (this.isObjectMode) {
                 this.push({file, line})
