@@ -69,6 +69,7 @@ test_files/file1.txt:aaaaaaatest4aaaaaaa
 - `glob`:              Treat files option as a glob.
 - `recursive`:         Recursively grep through folders.
 - `ignoreCase`:        Perform case insensitive matching.
+- `excludes`:          Array of RegExp exclusions.
 - `objectMode`:        Set `false` to receive string data.
 - `fullBinaryMatches`: Set `true` to display the full binary match.
 - `hideBinaryMatches`: Set `true` to hide all binary matches.

@@ -326,6 +326,18 @@ describe('egrep', () => {
                 {'file': 'test_files/one/two/letters', 'line': 'thanks'},
             ])
         })
+        it('excludes', async () => {
+            await test({
+                recursive: true,
+                files: ['test_files'],
+                pattern: '([a-c]|[0-9])',
+                excludes: [/binary/, /letters/, 'numbers']
+            }, [
+                {'file': 'test_files/file1.txt', 'line': '09876'},
+                {'file': 'test_files/file1.txt', 'line': 'aaaaaaatest4aaaaaaa'},
+                {'file': 'test_files/one/abc', 'line': 'abcdefg'},
+            ])
+        })
     })
     describe('bad input', () => {
         it('files are not strings', () => {
