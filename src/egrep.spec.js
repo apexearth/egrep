@@ -225,7 +225,36 @@ describe('egrep', () => {
                 {'file': 'test_files/numbers', 'line': '1234567890'},
                 {'file': 'test_files/one/abc', 'line': 'abcdefg'},
                 {'file': 'test_files/one/two/letters', 'line': 'abc'},
-                {'file': 'test_files/one/two/letters', 'line': 'thanks'}
+                {'file': 'test_files/one/two/letters', 'line': 'thanks'},
+                {'file': 'test_files/binary', 'line': 'Binary content match.'},
+                {'file': 'test_files/binary', 'line': 'Binary content match.'},
+                {'file': 'test_files/binary', 'line': 'Binary content match.'}
+            ])
+        })
+        it('binary match', async () => {
+            await test({
+                files: ['test_files/binary'],
+                pattern: 'L',
+            }, [
+                {'file': 'test_files/binary', 'line': 'Binary content match.'},
+                {'file': 'test_files/binary', 'line': 'Binary content match.'}
+            ])
+            await test({
+                files: ['test_files/binary'],
+                pattern: 'L',
+                fullBinaryMatches: true,
+            }, [
+                {
+                    'file': 'test_files/binary',
+                    'line': 'L\u0000\u0000\u0000\u0001\u0014\u0002\u0000\u0000\u0000\u0000\u0000�\u0000\u0000\u0000' +
+                        '\u0000\u0000\u0000F�\u0000\b\u0000\u0016\u0000\u0000\u00006\u001f'
+                },
+                {
+                    'file': 'test_files/binary',
+                    'line': '\u0000\u0000\u0000\u0000\u001f\u0000\u0000\u0000\u0010\u0000\u0000\u0000L\u0000o\u0000c' +
+                        '\u0000a\u0000l\u0000 \u0000D\u0000i\u0000s\u0000k\u0000 \u0000(\u0000C\u0000:\u0000)\u0000' +
+                        '\u0000\u0000)\u0000\u0000\u0000'
+                }
             ])
         })
         it('large file test', async () => {
