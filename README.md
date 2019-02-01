@@ -6,11 +6,11 @@ egrep for Node.js *(Extended Global Regular Expressions Print)*
 
 Use with Node.js
 
-    $ npm install https://github.com/apexearth/egrep --save
+    $ npm install @apexearth/egrep --save
 
 Use with Command Line
 
-    $ npm install https://github.com/apexearth/egrep -g
+    $ npm install @apexearth/egrep -g
 
 ## Node.js Usage
 

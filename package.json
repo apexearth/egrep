@@ -1,6 +1,6 @@
 {
   "name": "@apexearth/egrep",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "egrep for node!",
   "main": "index.js",
   "scripts": {
