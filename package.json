@@ -1,6 +1,6 @@
 {
   "name": "@apexearth/egrep",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "egrep for node!",
   "main": "index.js",
   "scripts": {
@@ -48,5 +48,8 @@
     "exclude": [
       "src/**/*.spec.js"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
