@@ -7,6 +7,5 @@ This contains a list of *possible* to-do items of varying importance.
 - Ability to process recursive directory or glob results as a stream so grepping large contents of files is more efficient.
 - Ability to display statistics
   - Files searched, lines searched, size searched.
-- Ability to run a function or execute a program for each result found.
 - Grep from stdin when no file is specified.
 - Make binary content matching identical to original `grep/egrep`?
