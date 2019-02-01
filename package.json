@@ -30,7 +30,6 @@
     "url": "https://github.com/apexearth/egrep/issues"
   },
   "homepage": "https://github.com/apexearth/egrep#readme",
-  "private": true,
   "devDependencies": {
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
