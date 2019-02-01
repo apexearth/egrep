@@ -69,7 +69,7 @@ describe('cli', () => {
     })
 
     it('exec', async () => {
-        const {stdout: nodeOutput} = await runNode('node-egrep -g abc "test_files/**" --exec "echo $1 and $2"')
+        const {stdout: nodeOutput} = await runNode('node-egrep -g abc "test_files/**" --exec "echo {1} and {2}"')
         expect(nodeOutput).to.equal(
             'test_files/one/abc:abcdefg\n' +
             'test_files/one/abc and abcdefg' + EOL +

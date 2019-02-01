@@ -86,7 +86,7 @@ Options:
   -g, --glob         Treat file args as globs.
   -i, --ignore-case  Perform case insensitive matching.
   -f, --file <file>  Read one or more newline separated patterns from file. Empty pattern lines match every input line.
-  --exec <cmd>       Execute a command for each match with $1=file $2=line
+  --exec <cmd>       Execute a command for each match with {1}=file {2}=line
   -h, --help         output usage information
 
 ```

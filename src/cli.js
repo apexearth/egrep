@@ -17,7 +17,7 @@ program
         'Read one or more newline separated patterns from file. ' +
         'Empty pattern lines match every input line.'
     )
-    .option('--exec <cmd>', 'Execute a command for each match with $1=file $2=line')
+    .option('--exec <cmd>', 'Execute a command for each match with {1}=file {2}=line')
     .action((pattern, file) => {
         program.objectMode = false
         program.pattern = pattern
@@ -51,7 +51,7 @@ stream.on('data', match => {
     process.stdout.write(match)
     if (program.exec) {
         const [file, line] = match.split(':')
-        const cmd = program.exec.replace(/\$1/g, file).replace(/\$2/g, line)
+        const cmd = program.exec.replace(/\{1}/g, file).replace(/\{2}/g, line)
         process.stdout.write(execSync(cmd).toString())
     }
 })
