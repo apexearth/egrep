@@ -60,7 +60,6 @@ egrep({
 Output:
 ```
 test_files/file1.txt:aaaaaaatest4aaaaaaa
-test_files/file1.txt:aaaaaaatest4aaaaaaa
 ```
 
 ## Options
