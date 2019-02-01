@@ -77,7 +77,7 @@ test_files/file1.txt:aaaaaaatest4aaaaaaa
 ## Command Line Usage
 
 ```
-Usage: node-egrep [options] [options] <pattern> <fil>
+Usage: node-egrep [options] <pattern> <file...>
 
 Options:
   -V, --version      output the version number
@@ -85,7 +85,8 @@ Options:
   -R, --recursive    Walk through directories recursively.
   -g, --glob         Treat file args as globs.
   -i, --ignore-case  Perform case insensitive matching.
-  -f, --file         Read one or more newline separated patterns from file. Empty pattern lines match every input line.
+  -f, --file <file>  Read one or more newline separated patterns from file. Empty pattern lines match every input line.
+  --exec <cmd>       Execute a command for each match with $1=file $2=line
   -h, --help         output usage information
 
 ```
