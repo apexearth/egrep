@@ -3,6 +3,7 @@
 const pkg = require('../package.json')
 const program = require('commander')
 const egrep = require('./egrep')
+const {execSync} = require('child_process')
 
 program
     .name('node-egrep')
@@ -16,6 +17,7 @@ program
         'Read one or more newline separated patterns from file. ' +
         'Empty pattern lines match every input line.'
     )
+    .option('--exec <cmd>', 'Execute a command for each match with {1}=file {2}=line')
     .action((pattern, file) => {
         program.objectMode = false
         program.pattern = pattern
@@ -44,8 +46,14 @@ if (program.files.length === 0) {
 }
 
 const stream = egrep(program)
-stream.on('data', line => {
-    process.stdout.write(line.toString())
+stream.on('data', match => {
+    match = match.toString()
+    process.stdout.write(match)
+    if (program.exec) {
+        const [file, line] = match.split(':')
+        const cmd = program.exec.replace(/\{1}/g, file).replace(/\{2}/g, line)
+        process.stdout.write(execSync(cmd).toString())
+    }
 })
 stream.on('error', err => {
     console.log('node-egrep:', err.message)

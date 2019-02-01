@@ -1,4 +1,3 @@
-const isWin = process.platform === 'win32'
 const assert = require('assert')
 const fs = require('fs')
 const readline = require('readline')
@@ -16,7 +15,10 @@ class Egrep extends Readable {
      * @param {boolean} [glob = false]
      * @param {boolean} [recursive = false]
      * @param {boolean} [ignoreCase = false] Perform case insensitive matching.
+     * @param {boolean} [excludes] An array of files or RegExp to ignore.
      * @param {boolean} [objectMode = true]
+     * @param {boolean} [fullBinaryMatches = false] Display the full binary match.
+     * @param {boolean} [hideBinaryMatches = false] Hide any binary matches.
      */
     constructor({
         files,
@@ -24,7 +26,10 @@ class Egrep extends Readable {
         glob = false,
         recursive = false,
         ignoreCase = false,
+        excludes,
         objectMode = true,
+        fullBinaryMatches = false,
+        hideBinaryMatches = false,
     } = {}) {
         super({objectMode})
 
@@ -35,7 +40,11 @@ class Egrep extends Readable {
         this.glob = glob
         this.recursive = recursive
         this.ignoreCase = ignoreCase
+        this.excludes = excludes || []
+        this.excludes = this.excludes.map(exclude => new RegExp(exclude))
         this.isObjectMode = objectMode
+        this.fullBinaryMatches = fullBinaryMatches
+        this.hideBinaryMatches = hideBinaryMatches
         this.validate()
 
         let regexOptions = ''
@@ -49,8 +58,12 @@ class Egrep extends Readable {
     validate() {
         assert(!(this.glob && this.recursive), 'Cannot use `glob` and `recursive` simultaneously')
         assert(Array.isArray(this.files) && this.files.length > 0, 'Missing required option: `files`')
-        assert(this.pattern, 'Missing required option: pattern')
+        assert(this.pattern, 'Missing required option: `pattern`')
 
+        assert(!this.excludes || (
+            Array.isArray(this.excludes) &&
+            !this.excludes.some(exclude => exclude.constructor !== RegExp)
+        ), 'Invalid `excludes` received.')
         assert(typeof this.pattern === 'string' || this.pattern.constructor === RegExp, 'Invalid option: `pattern` must be a string or RegExp.')
         assert(!this.files.some(file => typeof file !== 'string'), 'Invalid option: `files` must be type `string[].`')
     }
@@ -90,9 +103,14 @@ class Egrep extends Readable {
     }
 
     grepFiles(files) {
-        return files.filter(file => !this.processedFiles.includes(file)).reduce((promise, file) => (
-            promise.then(() => this.grepFile(file))
-        ), Promise.resolve())
+        return files
+            .filter(file => (
+                !this.processedFiles.includes(file) &&
+                (!this.excludes || !this.excludes.some(exclude => exclude.test(file)))
+            ))
+            .reduce((promise, file) => (
+                promise.then(() => this.grepFile(file))
+            ), Promise.resolve())
     }
 
     grepFile(file) {
@@ -112,10 +130,12 @@ class Egrep extends Readable {
     }
 
     grepFileLine(file, line) {
-        if (isWin) {
-            file = file.replace(/\\/g, '/')
-        }
         if (this.regex.test(line)) {
+            if (this.hideBinaryMatches && /\000/.test(line)) {
+                return
+            } else if (!this.fullBinaryMatches && /\000/.test(line)) {
+                line = 'Binary content match.'
+            }
             if (this.isObjectMode) {
                 this.push({file, line})
             } else {

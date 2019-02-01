@@ -1,3 +1,4 @@
+const {EOL} = require('os')
 const {exec} = require('child_process')
 const {promisify} = require('util')
 const {expect} = require('chai')
@@ -31,16 +32,7 @@ describe('cli', () => {
             await compare('node-egrep -i A test_files/file1.txt')
         })
     })
-    it('glob file test', async () => {
-        const {stdout: nodeOutput} = await runNode('node-egrep -g abc "test_files/**"')
-        expect(nodeOutput).to.equal(
-            'test_files/one/abc:abcdefg\n' +
-            'test_files/one/two/letters:abc\n')
-    })
-    it('help output', async () => {
-        const {stdout: nodeOutput} = await runNode('node-egrep -h')
-        expect(nodeOutput.startsWith('Usage: node-egrep')).to.equal(true)
-    })
+
     describe('bad input', () => {
         const test = (cmd, done) => {
             runNode(cmd)
@@ -62,5 +54,27 @@ describe('cli', () => {
         it('no file argument', done => {
             test('node-egrep one', done)
         })
+    })
+
+    it('glob file test', async () => {
+        const {stdout: nodeOutput} = await runNode('node-egrep -g abc "test_files/**"')
+        expect(nodeOutput).to.equal(
+            'test_files/one/abc:abcdefg\n' +
+            'test_files/one/two/letters:abc\n')
+    })
+
+    it('help output', async () => {
+        const {stdout: nodeOutput} = await runNode('node-egrep -h')
+        expect(nodeOutput.startsWith('Usage: node-egrep')).to.equal(true)
+    })
+
+    it('exec', async () => {
+        const {stdout: nodeOutput} = await runNode('node-egrep -g abc "test_files/**" --exec "echo {1} and {2}"')
+        expect(nodeOutput).to.equal(
+            'test_files/one/abc:abcdefg\n' +
+            'test_files/one/abc and abcdefg' + EOL +
+            'test_files/one/two/letters:abc\n' +
+            'test_files/one/two/letters and abc' + EOL
+        )
     })
 })

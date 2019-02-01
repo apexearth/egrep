@@ -64,17 +64,20 @@ test_files/file1.txt:aaaaaaatest4aaaaaaa
 
 ## Options
 
-- `files`:      The files, folders, or globs to grep.
-- `pattern`:    The pattern to grep for.
-- `glob`:       Treat files option as a glob.
-- `recursive`:  Recursively grep through folders.
-- `ignoreCase`: Perform case insensitive matching.
-- `objectMode`: Set `false` to receive string data.
+- `files`:             The files, folders, or globs to grep.
+- `pattern`:           The pattern to grep for.
+- `glob`:              Treat files option as a glob.
+- `recursive`:         Recursively grep through folders.
+- `ignoreCase`:        Perform case insensitive matching.
+- `excludes`:          Array of RegExp exclusions.
+- `objectMode`:        Set `false` to receive string data.
+- `fullBinaryMatches`: Set `true` to display the full binary match.
+- `hideBinaryMatches`: Set `true` to hide all binary matches.
 
 ## Command Line Usage
 
 ```
-Usage: node-egrep [options] [options] <pattern> <fil>
+Usage: node-egrep [options] <pattern> <file...>
 
 Options:
   -V, --version      output the version number
@@ -82,7 +85,8 @@ Options:
   -R, --recursive    Walk through directories recursively.
   -g, --glob         Treat file args as globs.
   -i, --ignore-case  Perform case insensitive matching.
-  -f, --file         Read one or more newline separated patterns from file. Empty pattern lines match every input line.
+  -f, --file <file>  Read one or more newline separated patterns from file. Empty pattern lines match every input line.
+  --exec <cmd>       Execute a command for each match with {1}=file {2}=line
   -h, --help         output usage information
 
 ```
