@@ -1,5 +1,11 @@
 # egrep
 
+[![Travis Status](https://travis-ci.org/apexearth/egrep.svg?branch=master)]((https://coveralls.io/github/apexearth/egrep?branch=master))
+[![Coverage Status](https://coveralls.io/repos/github/apexearth/egrep/badge.svg?branch=master)](https://coveralls.io/github/apexearth/egrep?branch=master)
+![NPM Downloads](https://img.shields.io/npm/dw/@apexearth/egrep.svg?style=flat)
+[![install size](https://packagephobia.now.sh/badge?p=@apexearth/egrep)](https://packagephobia.now.sh/result?p=@apexearth/egrep)
+![License](https://img.shields.io/npm/l/@apexearth/egrep.svg?style=flat)
+
 egrep for Node.js *(Extended Global Regular Expressions Print)*
 
 ## Installation
