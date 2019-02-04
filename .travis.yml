@@ -4,4 +4,4 @@ node_js:
   - "10"
   - "8"
 test:
-  - npm test
+  - npm run coveralls
