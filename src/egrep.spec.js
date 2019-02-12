@@ -62,7 +62,7 @@ describe('egrep', () => {
     describe('examples', () => {
         const _require = require
         it('Node.js Usage Example 1', () => {
-            const require = module => _require(`./${module}`)
+            const require = module => _require(`./${module.substring(10)}`)
             let egrep = require('@apexearth/egrep')
             let stream = egrep({
                 pattern: /test[1-9]/,
@@ -85,7 +85,7 @@ describe('egrep', () => {
             })
         })
         it('Node.js Usage Example 2', () => {
-            const require = module => _require(`./${module}`)
+            const require = module => _require(`./${module.substring(10)}`)
             let egrep = require('@apexearth/egrep')
             let stream = egrep({
                 pattern: /test[1-9]/,
