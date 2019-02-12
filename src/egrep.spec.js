@@ -63,7 +63,7 @@ describe('egrep', () => {
         const _require = require
         it('Node.js Usage Example 1', () => {
             const require = module => _require(`./${module}`)
-            let egrep = require('egrep')
+            let egrep = require('@apexearth/egrep')
             let stream = egrep({
                 pattern: /test[1-9]/,
                 files: [
@@ -86,7 +86,7 @@ describe('egrep', () => {
         })
         it('Node.js Usage Example 2', () => {
             const require = module => _require(`./${module}`)
-            let egrep = require('egrep')
+            let egrep = require('@apexearth/egrep')
             let stream = egrep({
                 pattern: /test[1-9]/,
                 files: [

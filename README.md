@@ -21,7 +21,7 @@ Use with Command Line
 ## Node.js Usage
 
 ```javascript
-let egrep = require('egrep')
+let egrep = require('@apexearth/egrep')
 let stream = egrep({
     pattern: /test[1-9]/,
     files: [
