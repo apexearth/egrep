@@ -29,18 +29,8 @@ if (!program.files) {
     program.files = []
 }
 
-if (typeof program.file === 'string') {
-    program.files.push(program.file)
-}
-
 if (!program.pattern) {
-    console.error('error: missing required argument `pattern`')
-    program.outputHelp()
-    process.exit(1)
-}
-
-if (program.files.length === 0) {
-    console.error('error: missing required argument `file`')
+    console.error('error: missing required argument `pattern\'')
     program.outputHelp()
     process.exit(1)
 }

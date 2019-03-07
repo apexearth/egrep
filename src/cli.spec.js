@@ -34,7 +34,7 @@ describe('cli', () => {
     })
 
     describe('bad input', () => {
-        const test = (cmd, done) => {
+        const test = (cmd, arg, done) => {
             runNode(cmd)
                 .then((stdout, stderr) => {
                     console.log('stdout:', stdout)
@@ -43,16 +43,25 @@ describe('cli', () => {
                 })
                 .catch(err => {
                     expect(err.code).to.equal(1)
-                    expect(err.stderr).to.contain('missing required argument')
+                    expect(err.stderr).to.contain('missing required argument `' + arg + '\'')
                     done()
                 })
                 .catch(done)
         }
         it('no arguments', done => {
-            test('node-egrep', done)
+            test('node-egrep', 'pattern', done)
         })
         it('no file argument', done => {
-            test('node-egrep one', done)
+            test('node-egrep one', 'file', done)
+        })
+    })
+
+    it('error non existent file', (done) => {
+        runNode('node-egrep one blacksmith fifty eggs').then(({stdout}) => {
+            done(stdout)
+        }).catch(({stdout}) => {
+            expect(stdout.startsWith('node-egrep: ENOENT: no such file or directory')).to.equal(true)
+            done()
         })
     })
 

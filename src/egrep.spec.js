@@ -145,16 +145,57 @@ describe('egrep', () => {
             })
         })
     })
+    describe('failure', () => {
+        it('file not existing', done => {
+            egrep({
+                files: ['Hippopotamus'],
+                pattern: 'abc'
+            }, err => {
+                expect(err.code).to.equal('ENOENT')
+                done()
+            })
+        })
+        it('file is a directory', done => {
+            egrep({
+                files: ['test_files'],
+                pattern: 'abc'
+            }, err => {
+                expect(err.message).to.equal('test_files: Is a directory')
+                done()
+            })
+        })
+    })
     describe('throws', () => {
+        it('Cannot use `glob` and `recursive` simultaneously', () => {
+            expect(() => egrep({
+                files: ['.'],
+                pattern: 'abc',
+                glob: true,
+                recursive: true,
+            })).to.throw()
+        })
         it('files is required', () => {
             expect(() => egrep({
                 files: undefined
+            })).to.throw()
+        })
+        it('all files should be a string', () => {
+            expect(() => egrep({
+                files: [{oop: 'sie'}],
+                pattern: 'abc',
             })).to.throw()
         })
         it('pattern is required', () => {
             expect(() => egrep({
                 files: ['.'],
                 pattern: undefined
+            })).to.throw()
+        })
+        it('excludes should be an Array', () => {
+            expect(() => egrep({
+                files: ['.'],
+                pattern: 'abc',
+                excludes: 'happiness',
             })).to.throw()
         })
         it('basic requirements fulfilled', () => {

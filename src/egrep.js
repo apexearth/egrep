@@ -64,7 +64,8 @@ class Egrep extends Readable {
             Array.isArray(this.excludes) &&
             !this.excludes.some(exclude => exclude.constructor !== RegExp)
         ), 'Invalid `excludes` received.')
-        assert(typeof this.pattern === 'string' || this.pattern.constructor === RegExp, 'Invalid option: `pattern` must be a string or RegExp.')
+        assert(typeof this.pattern === 'string' || this.pattern.constructor === RegExp,
+            'Invalid option: `pattern` must be a string or RegExp.')
         assert(!this.files.some(file => typeof file !== 'string'), 'Invalid option: `files` must be type `string[].`')
     }
 
