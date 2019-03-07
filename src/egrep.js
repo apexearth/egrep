@@ -75,42 +75,49 @@ class Egrep extends Readable {
         }
     }
 
-    start() {
-        this.files.reduce((promise, file) => (
-            promise
-                .then(() => this.lookupFiles(file))
-                .then(files => this.grepFiles(files))
-        ), Promise.resolve())
-            .then(() => this.emit('close')) // All done!
-            .catch(err => this.emit('error', err))
-    }
-
-    lookupFiles(file) {
-        if (this.glob) {
-            return globp(file, {nodir: true})
+    async start() {
+        try {
+            for (let file of this.files) {
+                const files = await this.lookupFiles(file)
+                await this.grepFiles(files)
+            }
+        } catch (err) {
+            this.emit('error', err)
+        } finally {
+            this.emit('close')
         }
-        return statp(file)
-            .then(stat => {
-                if (stat.isDirectory()) {
-                    if (this.recursive) {
-                        return recursivep(file)
-                    } else {
-                        throw Error(`${file}: Is a directory`)
-                    }
-                }
-                return stat.isFile() ? [file] : []
-            }).then(files => files.map(upath.normalize))
     }
 
-    grepFiles(files) {
-        return files
+    async lookupFiles(file) {
+        let files
+        if (this.glob) {
+            files = await globp(file, {nodir: true})
+        } else {
+            const stat = await statp(file)
+            if (stat.isDirectory()) {
+                if (this.recursive) {
+                    files = await recursivep(file)
+                } else {
+                    throw Error(`${file}: Is a directory`)
+                }
+            } else if (stat.isFile()) {
+                files = [file]
+            } else {
+                files = []
+            }
+        }
+        return files.map(upath.normalize)
+    }
+
+    async grepFiles(files) {
+        const files2 = files
             .filter(file => (
                 !this.processedFiles.includes(file) &&
                 (!this.excludes || !this.excludes.some(exclude => exclude.test(file)))
             ))
-            .reduce((promise, file) => (
-                promise.then(() => this.grepFile(file))
-            ), Promise.resolve())
+        for (let file of files2) {
+            await this.grepFile(file)
+        }
     }
 
     grepFile(file) {
