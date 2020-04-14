@@ -5,10 +5,11 @@ node_js:
   - "10"
   - "8"
 script:
-  - npm run coveralls
+  - npm test
 deploy:
   provider: npm
   email: apexearth@gmail.com
   api_key: $NPM_TOKEN
   on:
     tags: true
+after_success: npm run coveralls
